@@ -10,14 +10,17 @@ import javax.validation.constraints.Min;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class Login {
+public class CreateOrUpdateAd {
 
     @Min(4)
     @Max(32)
-    private String username;
+    private String title;
+
+    @Min(0)
+    @Max(10000000)
+    private Long price;
 
     @Min(8)
-    @Max(16)
-    private String password;
-
+    @Max(64)
+    private String description;
 }

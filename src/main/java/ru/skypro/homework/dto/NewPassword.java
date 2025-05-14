@@ -10,14 +10,13 @@ import javax.validation.constraints.Min;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class Login {
-
-    @Min(4)
-    @Max(32)
-    private String username;
+public class NewPassword {
 
     @Min(8)
     @Max(16)
-    private String password;
+    private String currentPassword;
 
+    @Min(8)
+    @Max(16)
+    private String newPassword;
 }
