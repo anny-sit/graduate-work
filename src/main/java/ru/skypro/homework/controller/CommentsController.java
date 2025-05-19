@@ -5,9 +5,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import ru.skypro.homework.dto.Comment;
-import ru.skypro.homework.dto.Comments;
-import ru.skypro.homework.dto.CreateOrUpdateComment;
+import ru.skypro.homework.dto.CommentDto;
+import ru.skypro.homework.dto.CommentsDto;
+import ru.skypro.homework.dto.CreateOrUpdateCommentDto;
 
 @Slf4j
 @CrossOrigin(value = "http://localhost:3000")
@@ -19,7 +19,7 @@ public class CommentsController {
     @GetMapping("/{id}/comments")
     public ResponseEntity<?> getComments(@RequestParam Long id) {
 
-        return ResponseEntity.ok(new Comments());
+        return ResponseEntity.ok(new CommentsDto());
 
         /*return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         return ResponseEntity.status(HttpStatus.FORBIDDEN).build();*/
@@ -28,7 +28,7 @@ public class CommentsController {
     @PostMapping("/{id}/comments")
     public ResponseEntity<?> addComment(@RequestParam Long id) {
 
-        return ResponseEntity.ok(new Comment());
+        return ResponseEntity.ok(new CommentDto());
 
         /*return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         return ResponseEntity.status(HttpStatus.FORBIDDEN).build();*/
@@ -47,9 +47,9 @@ public class CommentsController {
     @PatchMapping("/{adId}/comments/{commentId}")
     public ResponseEntity<?> updateComment(@RequestParam Long adId,
                                            @RequestParam Long commentId,
-                                           @RequestBody CreateOrUpdateComment createOrUpdateComment) {
+                                           @RequestBody CreateOrUpdateCommentDto createOrUpdateComment) {
 
-        return ResponseEntity.ok(new Comment());
+        return ResponseEntity.ok(new CommentDto());
 
         /*return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         return ResponseEntity.status(HttpStatus.FORBIDDEN).build();

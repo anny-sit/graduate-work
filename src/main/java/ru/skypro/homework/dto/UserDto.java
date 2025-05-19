@@ -2,14 +2,13 @@ package ru.skypro.homework.dto;
 
 import lombok.*;
 
-import javax.validation.constraints.NotNull;
+import jakarta.validation.constraints.NotNull;
 
-@Data
 @NoArgsConstructor
 @AllArgsConstructor
-@EqualsAndHashCode
-@ToString
-public class User {
+@Getter
+@Setter
+public class UserDto {
 
     private String id;
     private String email;
@@ -18,7 +17,8 @@ public class User {
     private String phone;
 
     @NotNull
-    private String role;
+    private Role role;
 
     private String image;
 }
+//стоит ли дто в рекорды переписать?

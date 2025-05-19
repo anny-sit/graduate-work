@@ -1,0 +1,3 @@
+databaseChangeLog:
+  - includeAll:
+      path: db/changelog/versions/001-db.changelog-v0.0.1.yml

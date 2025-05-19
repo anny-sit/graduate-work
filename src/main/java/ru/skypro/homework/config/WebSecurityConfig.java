@@ -11,8 +11,6 @@ import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 import org.springframework.security.web.SecurityFilterChain;
 import ru.skypro.homework.dto.Role;
 
-import static org.springframework.security.config.Customizer.withDefaults;
-
 @Configuration
 public class WebSecurityConfig {
 
@@ -27,30 +25,25 @@ public class WebSecurityConfig {
 
     @Bean
     public InMemoryUserDetailsManager userDetailsService(PasswordEncoder passwordEncoder) {
-        UserDetails user =
-                User.builder()
-                        .username("user@gmail.com")
-                        .password("password")
-                        .passwordEncoder(passwordEncoder::encode)
-                        .roles(Role.USER.name())
-                        .build();
+        UserDetails user = User.builder()
+                .username("user@gmail.com")
+                .password(passwordEncoder.encode("password"))
+                .roles(Role.USER.name())
+                .build();
         return new InMemoryUserDetailsManager(user);
     }
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-        http.csrf()
-                .disable()
-                .authorizeHttpRequests(
-                        authorization ->
-                                authorization
-                                        .mvcMatchers(AUTH_WHITELIST)
-                                        .permitAll()
-                                        .mvcMatchers("/ads/**", "/users/**")
-                                        .authenticated())
-                .cors()
-                .and()
-                .httpBasic(withDefaults());
+        http
+                .csrf(csrf -> csrf.disable())
+                .authorizeHttpRequests(auth -> auth
+                        .requestMatchers(AUTH_WHITELIST).permitAll()
+                        .requestMatchers("/ads/**", "/users/**").authenticated()
+                        .anyRequest().authenticated()
+                )
+                .cors(cors -> cors.configurationSource(request -> new org.springframework.web.cors.CorsConfiguration().applyPermitDefaultValues()))
+                .httpBasic(httpBasic -> httpBasic.realmName("Ads API"));
         return http.build();
     }
 
@@ -58,5 +51,4 @@ public class WebSecurityConfig {
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
-
 }

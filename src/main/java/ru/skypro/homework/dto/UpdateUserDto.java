@@ -1,17 +1,16 @@
 package ru.skypro.homework.dto;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
-import javax.validation.constraints.Max;
-import javax.validation.constraints.Min;
-import javax.validation.constraints.Pattern;
+import jakarta.validation.constraints.Max;
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.Pattern;
 
-@Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class UpdateUser {
+@Getter
+@Setter
+public class UpdateUserDto {
 
     @Min(3)
     @Max(10)
