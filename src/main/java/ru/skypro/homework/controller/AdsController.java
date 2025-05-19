@@ -22,12 +22,12 @@ public class AdsController {
 
     @GetMapping
     public ResponseEntity<?> getAllAds() {
-        List<Ad> ads = new ArrayList<>();
+        List<AdDto> ads = new ArrayList<>();
         return ResponseEntity.ok(ads);
     }
 
     @PostMapping
-    public ResponseEntity<?> addAd(@RequestParam Ad ad, @RequestParam MultipartFile image) throws URISyntaxException {
+    public ResponseEntity<?> addAd(@RequestParam AdDto ad, @RequestParam MultipartFile image) throws URISyntaxException {
 
         return ResponseEntity.created(new URI("/ads/" + ad.getTitle())).body(ad);
 
@@ -36,7 +36,7 @@ public class AdsController {
 
     @GetMapping("/{id}")
     public ResponseEntity<?> getAds(@RequestParam Long id) {
-        return ResponseEntity.ok(new ExtendedAd());
+        return ResponseEntity.ok(new ExtendedAdDto());
 
         /*return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         return ResponseEntity.status(HttpStatus.NOT_FOUND).build();*/
@@ -55,7 +55,7 @@ public class AdsController {
     @PatchMapping("/{id}")
     public ResponseEntity<?> updateAds(@RequestParam Long id) {
 
-        return ResponseEntity.ok(new Ad());
+        return ResponseEntity.ok(new AdDto());
 
         /*return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
@@ -65,7 +65,7 @@ public class AdsController {
     @GetMapping("/me")
     public ResponseEntity<?> getAdsMe() {
 
-        return ResponseEntity.ok(new Ads());
+        return ResponseEntity.ok(new AdsDto());
 
         //return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
     }
@@ -73,7 +73,7 @@ public class AdsController {
     @PatchMapping("/{id}/image")
     public ResponseEntity<?> updateImage(@RequestParam Long id, @RequestBody MultipartFile image) {
 
-        return ResponseEntity.ok(new Ad().getImage());
+        return ResponseEntity.ok(new AdDto().getImage());
 
         /*return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
