@@ -1,0 +1,161 @@
+databaseChangeLog:
+  - changeSet:
+      id: 001v0.0.1-1
+      author: anny_sit
+      comment: Create SEQUENCE
+      changes:
+        - createSequence:
+            sequenceName: hibernate_sequence
+            startValue: 15000
+
+  - changeSet:
+      id: 001v0.0.1-2
+      author: anny_sit
+      comment: Create user_table table
+      changes:
+        - createTable:
+            tableName: user_table
+            columns:
+              - column:
+                  name: id
+                  type: INTEGER
+                  constraints:
+                    primaryKey: true
+
+              - column:
+                  name: email
+                  type: VARCHAR(32)
+                  constraints:
+                    nullable: false
+                    checkConstraint: LENGTH(text) >= 4
+
+              - column:
+                  name: firstName
+                  type: VARCHAR(16)
+                  constraints:
+                    nullable: false
+                    checkConstraint: LENGTH(text) >= 2
+
+              - column:
+                  name: lastName
+                  type: VARCHAR(16)
+                  constraints:
+                    nullable: false
+                    checkConstraint: LENGTH(text) >= 2
+
+              - column:
+                  name: phone
+                  type: VARCHAR(19)
+                  constraints:
+                    nullable: false
+                    checkConstraint: phone ~ '^\+7\s?\(?\d{3}\)?\s?\d{3}-?\d{2}-?\d{2}$'
+
+              - column:
+                  name: role
+                  type: VARCHAR(20)
+                  constraints:
+                    nullable: false
+                    checkConstraint: status IN ('USER', 'ADMIN')
+                  defaultValue: 'USER'
+
+              - column:
+                  name: image
+                  type: VARCHAR
+                  constraints:
+                    nullable: false
+
+              - column:
+                  name: password
+                  type: VARCHAR(16)
+                  constraints:
+                    nullable: false
+                    checkConstraint: LENGTH(text) >= 8
+
+  - changeSet:
+      id: 001v0.0.1-3
+      author: anny_sit
+      comment: Create comment table
+      changes:
+        - createTable:
+            tableName: comment
+            columns:
+              - column:
+                  name: pk
+                  type: INT
+                  constraints:
+                    primaryKey: true
+
+              - column:
+                  name: author
+                  type: INTEGER
+                  constraints:
+                    nullable: false
+                    foreignKey:
+                      foreignKeyName: fk_comments_author
+                      referencedTableName: user_table
+                      referencedColumnNames: id
+
+              - column:
+                  name: createdAt
+                  type: BIGINT
+                  constraints:
+                    nullable: false
+                    checkConstraint: created_at >= 0
+
+              - column:
+                  name: text
+                  type: VARCHAR(64)
+                  constraints:
+                    nullable: false
+                    checkConstraint: LENGTH(text) >= 8
+
+  - changeSet:
+      id: 001v0.0.1-4
+      author: anny_sit
+      comment: Create ad_table table
+      changes:
+        - createTable:
+            tableName: ad_table
+            columns:
+              - column:
+                  name: pk
+                  type: INTEGER
+                  constraints:
+                    primaryKey: true
+
+              - column:
+                  name: author
+                  type: INTEGER
+                  constraints:
+                    nullable: false
+                    foreignKey:
+                      foreignKeyName: fk_ad_author
+                      referencedTableName: user_table
+                      referencedColumnNames: id
+
+              - column:
+                  name: image
+                  type: VARCHAR
+                  constraints:
+                    nullable: false
+
+              - column:
+                  name: price
+                  type: INT
+                  constraints:
+                    nullable: false
+                    checkConstraint: price >= 0 AND price <= 10000000
+
+              - column:
+                  name: title
+                  type: VARCHAR(32)
+                  constraints:
+                    nullable: false
+                    checkConstraint: LENGTH(text) >= 4
+
+              - column:
+                  name: description
+                  type: VARCHAR(64)
+                  constraints:
+                    nullable: false
+                    checkConstraint: LENGTH(text) >= 8
