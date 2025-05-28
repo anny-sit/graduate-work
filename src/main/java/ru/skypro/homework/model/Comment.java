@@ -1,21 +1,19 @@
 package ru.skypro.homework.model;
 
+import jakarta.validation.constraints.Size;
 import lombok.*;
 
 import jakarta.persistence.*;
-import jakarta.validation.constraints.Max;
-import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
 import java.time.LocalDateTime;
 
 @Getter
 @Setter
 @AllArgsConstructor
-@RequiredArgsConstructor
 @NoArgsConstructor
 @EqualsAndHashCode
 @ToString
-@Table(name = "comment")
+@Table(name = "comments")
 @Entity
 public class Comment {
 
@@ -25,15 +23,25 @@ public class Comment {
 
     @NotNull
     @ManyToOne
-    @JoinColumn(name = "id")
+    @JoinColumn(name = "author_id")
     private User author;
 
     @NotNull
-    @Min(0)
-    private Long createdAt;
+    @ManyToOne
+    @JoinColumn(name = "ad_id")
+    private Ad ad;
 
     @NotNull
-    @Min(8)
-    @Max(64)
+    private LocalDateTime createdAt;
+
+    @NotNull
+    @Size(max = 64, min = 8)
+    @Column(length = 64)
     private String text;
+
+    @Transient
+    public String getImage() {
+        return author != null ? author.getImage() : null;
+    }
+
 }

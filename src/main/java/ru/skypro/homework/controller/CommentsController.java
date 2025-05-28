@@ -4,10 +4,13 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 import ru.skypro.homework.dto.CommentDto;
 import ru.skypro.homework.dto.CommentsDto;
 import ru.skypro.homework.dto.CreateOrUpdateCommentDto;
+import ru.skypro.homework.service.CommentService;
 
 @Slf4j
 @CrossOrigin(value = "http://localhost:3000")
@@ -16,43 +19,34 @@ import ru.skypro.homework.dto.CreateOrUpdateCommentDto;
 @RequestMapping("/ads")
 public class CommentsController {
 
+    private final CommentService commentService;
+
     @GetMapping("/{id}/comments")
-    public ResponseEntity<?> getComments(@RequestParam Long id) {
-
-        return ResponseEntity.ok(new CommentsDto());
-
-        /*return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
-        return ResponseEntity.status(HttpStatus.FORBIDDEN).build();*/
+    public ResponseEntity<CommentsDto> getComments(@PathVariable Integer id) {
+        return ResponseEntity.ok(commentService.getCommentsByAdId(id));
     }
 
     @PostMapping("/{id}/comments")
-    public ResponseEntity<?> addComment(@RequestParam Long id) {
-
-        return ResponseEntity.ok(new CommentDto());
-
-        /*return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
-        return ResponseEntity.status(HttpStatus.FORBIDDEN).build();*/
+    public ResponseEntity<CommentDto> addComment(@PathVariable Long id,
+                                                 @RequestBody CreateOrUpdateCommentDto comment,
+                                                 Authentication authentication) {
+        CommentDto createdComment = commentService.createComment(id, comment, authentication.getName());
+        return ResponseEntity.ok(createdComment);
     }
 
+    @PreAuthorize("hasRole('ADMIN') or authentication.name == @commentService.getComment(#commentId).author.email")
     @DeleteMapping("/{adId}/comments/{commentId}")
-    public ResponseEntity<?> deleteComment(@RequestParam Long adId, @RequestParam Long commentId) {
-
+    public ResponseEntity<?> deleteComment(@PathVariable Long adId, @PathVariable Long commentId) {
+        commentService.deleteComment(commentId);
         return ResponseEntity.status(HttpStatus.OK).build();
-
-        /*return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
-        return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
-        return ResponseEntity.status(HttpStatus.NOT_FOUND).build();*/
     }
 
+    @PreAuthorize("hasRole('ADMIN') or authentication.name == @commentService.getComment(#commentId).author.email")
     @PatchMapping("/{adId}/comments/{commentId}")
-    public ResponseEntity<?> updateComment(@RequestParam Long adId,
-                                           @RequestParam Long commentId,
-                                           @RequestBody CreateOrUpdateCommentDto createOrUpdateComment) {
-
-        return ResponseEntity.ok(new CommentDto());
-
-        /*return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
-        return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
-        return ResponseEntity.status(HttpStatus.NOT_FOUND).build();*/
+    public ResponseEntity<CommentDto> updateComment(@PathVariable Long adId,
+                                                    @PathVariable Long commentId,
+                                                    @RequestBody CreateOrUpdateCommentDto comment) {
+        CommentDto updatedComment = commentService.updateComment(commentId, comment);
+        return ResponseEntity.ok(updatedComment);
     }
 }

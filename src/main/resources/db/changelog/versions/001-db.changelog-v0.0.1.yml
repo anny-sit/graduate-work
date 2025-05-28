@@ -19,95 +19,98 @@ databaseChangeLog:
               - column:
                   name: id
                   type: INTEGER
+                  autoIncrement: true
                   constraints:
                     primaryKey: true
-
+                    primaryKeyName: pk_user_table
               - column:
                   name: email
                   type: VARCHAR(32)
                   constraints:
                     nullable: false
-                    checkConstraint: LENGTH(text) >= 4
-
+                    checkConstraint: LENGTH(email) >= 4
               - column:
-                  name: firstName
+                  name: first_name
                   type: VARCHAR(16)
                   constraints:
                     nullable: false
-                    checkConstraint: LENGTH(text) >= 2
-
+                    checkConstraint: LENGTH(first_name) >= 2
               - column:
-                  name: lastName
+                  name: last_name
                   type: VARCHAR(16)
                   constraints:
                     nullable: false
-                    checkConstraint: LENGTH(text) >= 2
-
+                    checkConstraint: LENGTH(last_name) >= 2
               - column:
                   name: phone
                   type: VARCHAR(19)
                   constraints:
                     nullable: false
                     checkConstraint: phone ~ '^\+7\s?\(?\d{3}\)?\s?\d{3}-?\d{2}-?\d{2}$'
-
               - column:
                   name: role
                   type: VARCHAR(20)
                   constraints:
                     nullable: false
-                    checkConstraint: status IN ('USER', 'ADMIN')
+                    checkConstraint: role IN ('USER', 'ADMIN')
                   defaultValue: 'USER'
-
               - column:
                   name: image
-                  type: VARCHAR
+                  type: VARCHAR(255)
                   constraints:
                     nullable: false
-
               - column:
                   name: password
                   type: VARCHAR(16)
                   constraints:
                     nullable: false
-                    checkConstraint: LENGTH(text) >= 8
+                    checkConstraint: LENGTH(password) >= 8
+
 
   - changeSet:
       id: 001v0.0.1-3
       author: anny_sit
-      comment: Create comment table
+      comment: Create comments table
       changes:
         - createTable:
-            tableName: comment
+            tableName: comments
             columns:
               - column:
                   name: pk
-                  type: INT
+                  type: INTEGER
+                  autoIncrement: true
                   constraints:
                     primaryKey: true
-
+                    primaryKeyName: pk_comments
               - column:
-                  name: author
+                  name: author_id
                   type: INTEGER
                   constraints:
                     nullable: false
-                    foreignKey:
-                      foreignKeyName: fk_comments_author
-                      referencedTableName: user_table
-                      referencedColumnNames: id
-
+                    foreignKeyName: fk_comments_author
+                    referencedTableName: user_table
+                    referencedColumnNames: id
               - column:
-                  name: createdAt
-                  type: BIGINT
+                  name: ad_id
+                  type: INTEGER
                   constraints:
                     nullable: false
-                    checkConstraint: created_at >= 0
-
+                    foreignKeyName: fk_comments_ad
+                    referencedTableName: ad_table
+                    referencedColumnNames: pk
+              - column:
+                  name: created_at
+                  type: TIMESTAMP WITHOUT TIME ZONE
+                  constraints:
+                    nullable: false
+                  defaultValueComputed: CURRENT_TIMESTAMP
               - column:
                   name: text
                   type: VARCHAR(64)
                   constraints:
                     nullable: false
                     checkConstraint: LENGTH(text) >= 8
+
 
   - changeSet:
       id: 001v0.0.1-4
@@ -120,42 +123,69 @@ databaseChangeLog:
               - column:
                   name: pk
                   type: INTEGER
+                  autoIncrement: true
                   constraints:
                     primaryKey: true
-
+                    primaryKeyName: pk_ad_table
               - column:
-                  name: author
+                  name: author_id
                   type: INTEGER
                   constraints:
                     nullable: false
-                    foreignKey:
-                      foreignKeyName: fk_ad_author
-                      referencedTableName: user_table
-                      referencedColumnNames: id
-
+                    foreignKeyName: fk_ad_author
+                    referencedTableName: user_table
+                    referencedColumnNames: id
               - column:
                   name: image
-                  type: VARCHAR
+                  type: VARCHAR(255)
                   constraints:
                     nullable: false
-
               - column:
                   name: price
-                  type: INT
+                  type: INTEGER
                   constraints:
                     nullable: false
                     checkConstraint: price >= 0 AND price <= 10000000
-
               - column:
                   name: title
                   type: VARCHAR(32)
                   constraints:
                     nullable: false
-                    checkConstraint: LENGTH(text) >= 4
-
+                    checkConstraint: LENGTH(title) >= 4
               - column:
                   name: description
                   type: VARCHAR(64)
                   constraints:
                     nullable: false
-                    checkConstraint: LENGTH(text) >= 8
+                    checkConstraint: LENGTH(description) >= 8
+
+
+  - changeSet:
+      id: 001v0.0.1-6
+      author: anny_sit
+      comment: Create image_table table
+      changes:
+        - createTable:
+            tableName: image_table
+            columns:
+              - column:
+                  name: id
+                  type: BIGINT
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    primaryKeyName: pk_images
+              - column:
+                  name: source
+                  type: VARCHAR(255)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: file_size_bytes
+                  type: BIGINT
+              - column:
+                  name: mime_type
+                  type: VARCHAR(100)
+              - column:
+                  name: file_data
+                  type: BYTEA

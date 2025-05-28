@@ -1,10 +1,7 @@
 package ru.skypro.homework.dto;
 
+import jakarta.validation.constraints.*;
 import lombok.*;
-
-import jakarta.validation.constraints.Max;
-import jakarta.validation.constraints.Min;
-import jakarta.validation.constraints.Pattern;
 
 @NoArgsConstructor
 @AllArgsConstructor
@@ -12,14 +9,15 @@ import jakarta.validation.constraints.Pattern;
 @Setter
 public class UpdateUserDto {
 
-    @Min(3)
-    @Max(10)
+    @NotBlank(message = "First name must not be blank")
+    @Size(min = 3, max = 10)
     private String firstName;
 
-    @Min(3)
-    @Max(10)
+    @NotBlank(message = "Last name must not be blank")
+    @Size(min = 3, max = 10)
     private String lastName;
 
+    @NotBlank(message = "Phone must not be blank")
     @Pattern(regexp = "\\+7\\s?\\(?\\d{3}\\)?\\s?\\d{3}-?\\d{2}-?\\d{2}")
     private String phone;
 }
