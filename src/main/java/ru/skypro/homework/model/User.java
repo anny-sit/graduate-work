@@ -1,18 +1,14 @@
 package ru.skypro.homework.model;
 
+import jakarta.validation.constraints.*;
 import lombok.*;
 import ru.skypro.homework.dto.Role;
 
 import jakarta.persistence.*;
-import jakarta.validation.constraints.Max;
-import jakarta.validation.constraints.Min;
-import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Pattern;
 
 @Setter
 @Getter
 @AllArgsConstructor
-@RequiredArgsConstructor
 @NoArgsConstructor
 @EqualsAndHashCode
 @ToString
@@ -25,18 +21,18 @@ public class User {
     private Integer id;
 
     @NotNull
-    @Min(4)
-    @Max(32)
+    @Size(max = 32, min = 4)
+    @Column(length = 32)
     private String email;
 
     @NotNull
-    @Min(2)
-    @Max(16)
+    @Size(max = 16, min = 2)
+    @Column(length = 16)
     private String firstName;
 
     @NotNull
-    @Min(2)
-    @Max(16)
+    @Size(max = 16, min = 2)
+    @Column(length = 16)
     private String lastName;
 
     @NotNull
@@ -48,12 +44,12 @@ public class User {
     @Column(name = "role", nullable = false)
     private Role role;
 
-    @NotNull
+    @Column(nullable = false, length = 255)
     private String image;
 
     @NotNull
-    @Max(16)
-    @Min(8)
+    @Size(max = 16, min = 8)
+    @Column(length = 16)
     private String password;
 
 }

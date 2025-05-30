@@ -9,6 +9,6 @@ import java.util.List;
 @Getter
 @Setter
 public class CommentsDto {
-    private String count;
+    private Integer count;
     private List<CommentDto> results;
 }

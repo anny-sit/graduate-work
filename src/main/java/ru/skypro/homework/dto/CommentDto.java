@@ -2,7 +2,7 @@ package ru.skypro.homework.dto;
 
 import lombok.*;
 
-import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.*;
 
 @NoArgsConstructor
 @AllArgsConstructor
@@ -10,15 +10,23 @@ import jakarta.validation.constraints.Min;
 @Setter
 public class CommentDto {
 
-
+    @NotNull
     private Integer author;
-    private String image;
+
+    @Size(max = 255)
+    private String authorImage;
+
+    @NotBlank
+    @Size(max = 16)
     private String authorFirstName;
 
-
-    @Min(0)
+    @NotNull
+    @Min(value = 0)
     private Long createdAt;
 
     private Integer pk;
+
+    @NotBlank
+    @Size(min = 8, max = 64)
     private String text;
 }

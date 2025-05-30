@@ -3,15 +3,20 @@ package ru.skypro.homework.controller;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-import ru.skypro.homework.dto.*;
+import ru.skypro.homework.dto.AdDto;
+import ru.skypro.homework.dto.AdsDto;
+import ru.skypro.homework.dto.CreateOrUpdateAdDto;
+import ru.skypro.homework.dto.ExtendedAdDto;
+import ru.skypro.homework.service.AdService;
 
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.util.ArrayList;
-import java.util.List;
 
 @Slf4j
 @CrossOrigin(value = "http://localhost:3000")
@@ -20,63 +25,50 @@ import java.util.List;
 @RequestMapping("/ads")
 public class AdsController {
 
+    private final AdService adService;
+
     @GetMapping
-    public ResponseEntity<?> getAllAds() {
-        List<AdDto> ads = new ArrayList<>();
-        return ResponseEntity.ok(ads);
+    public ResponseEntity<AdsDto> getAllAds() {
+        return ResponseEntity.ok(adService.getAllAds());
     }
 
-    @PostMapping
-    public ResponseEntity<?> addAd(@RequestParam AdDto ad, @RequestParam MultipartFile image) throws URISyntaxException {
-
-        return ResponseEntity.created(new URI("/ads/" + ad.getTitle())).body(ad);
-
-        //return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+    @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<AdDto> addAd(@RequestPart CreateOrUpdateAdDto ad,
+                                       @RequestPart MultipartFile image,
+                                       Authentication authentication) throws URISyntaxException {
+        AdDto createdAd = adService.createAd(ad, image, authentication.getName());
+        return ResponseEntity.created(new URI("/ads/" + createdAd.getPk())).body(createdAd);
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<?> getAds(@RequestParam Long id) {
-        return ResponseEntity.ok(new ExtendedAdDto());
-
-        /*return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
-        return ResponseEntity.status(HttpStatus.NOT_FOUND).build();*/
+    public ResponseEntity<ExtendedAdDto> getAds(@PathVariable Long id) {
+        ExtendedAdDto ad = adService.getAd(id);
+        return ResponseEntity.ok(ad);
     }
 
+    @PreAuthorize("hasRole('ADMIN') or authentication.name == @adService.getAd(#id).author.email")
     @DeleteMapping("/{id}")
-    public ResponseEntity<?> removeAd(@RequestParam Long id) {
-
+    public ResponseEntity<?> removeAd(@PathVariable Long id) {
+        adService.deleteAd(id);
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
-
-        /*return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
-        return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
-        return ResponseEntity.status(HttpStatus.NOT_FOUND).build();*/
     }
 
+    @PreAuthorize("hasRole('ADMIN') or authentication.name == @adService.getAd(#id).author.email")
     @PatchMapping("/{id}")
-    public ResponseEntity<?> updateAds(@RequestParam Long id) {
-
-        return ResponseEntity.ok(new AdDto());
-
-        /*return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
-        return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
-        return ResponseEntity.status(HttpStatus.NOT_FOUND).build();*/
+    public ResponseEntity<AdDto> updateAds(@PathVariable Long id, @RequestBody CreateOrUpdateAdDto ad) {
+        AdDto updatedAd = adService.updateAd(id, ad);
+        return ResponseEntity.ok(updatedAd);
     }
 
     @GetMapping("/me")
-    public ResponseEntity<?> getAdsMe() {
-
-        return ResponseEntity.ok(new AdsDto());
-
-        //return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+    public ResponseEntity<AdsDto> getAdsMe(Authentication authentication) {
+        return ResponseEntity.ok(adService.getUserAds(authentication.getName()));
     }
 
-    @PatchMapping("/{id}/image")
-    public ResponseEntity<?> updateImage(@RequestParam Long id, @RequestBody MultipartFile image) {
-
-        return ResponseEntity.ok(new AdDto().getImage());
-
-        /*return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
-        return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
-        return ResponseEntity.status(HttpStatus.NOT_FOUND).build();*/
+    @PreAuthorize("hasRole('ADMIN') or authentication.name == @adService.getAd(#id).author.email")
+    @PatchMapping(value = "/{id}/image", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<String> updateImage(@PathVariable Long id, @RequestPart MultipartFile image) {
+        String imagePath = adService.updateAdImage(id, image);
+        return ResponseEntity.ok(imagePath);
     }
 }

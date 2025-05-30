@@ -1,11 +1,7 @@
 package ru.skypro.homework.dto;
 
+import jakarta.validation.constraints.*;
 import lombok.*;
-
-import jakarta.validation.constraints.Max;
-import jakarta.validation.constraints.Min;
-import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Pattern;
 
 @NoArgsConstructor
 @AllArgsConstructor
@@ -13,22 +9,23 @@ import jakarta.validation.constraints.Pattern;
 @Setter
 public class RegisterDto {
 
-    @Min(4)
-    @Max(32)
+    @NotBlank
+    @Size(min = 4, max = 32)
     private String username;
 
-    @Min(8)
-    @Max(16)
+    @NotBlank
+    @Size(min = 8, max = 16)
     private String password;
 
-    @Min(2)
-    @Max(16)
+    @NotBlank
+    @Size(min = 2, max = 16)
     private String firstName;
 
-    @Min(2)
-    @Max(16)
+    @NotBlank
+    @Size(min = 2, max = 16)
     private String lastName;
 
+    @NotBlank
     @Pattern(regexp = "\\+7\\s?\\(?\\d{3}\\)?\\s?\\d{3}-?\\d{2}-?\\d{2}")
     private String phone;
 

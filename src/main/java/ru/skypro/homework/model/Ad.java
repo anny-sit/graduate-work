@@ -1,5 +1,6 @@
 package ru.skypro.homework.model;
 
+import jakarta.validation.constraints.Size;
 import lombok.*;
 
 import jakarta.persistence.*;
@@ -10,24 +11,22 @@ import jakarta.validation.constraints.NotNull;
 @Setter
 @Getter
 @AllArgsConstructor
-@RequiredArgsConstructor
 @NoArgsConstructor
 @EqualsAndHashCode
 @ToString
 @Table(name = "ad_table")
 @Entity
 public class Ad {
-
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Integer pk;
 
     @NotNull
     @ManyToOne
-    @JoinColumn(name = "id")
+    @JoinColumn(name = "author_id")
     private User author;
 
-    @NotNull
+    @Column(nullable = false, length = 255)
     private String image;
 
     @NotNull
@@ -36,12 +35,13 @@ public class Ad {
     private Integer price;
 
     @NotNull
-    @Max(32)
-    @Min(4)
+    @Size(max = 32, min = 4)
+    @Column(length = 32)
     private String title;
 
     @NotNull
-    @Max(64)
-    @Min(8)
+    @Size(max = 64, min = 8)
+    @Column(length = 64)
     private String description;
+
 }
