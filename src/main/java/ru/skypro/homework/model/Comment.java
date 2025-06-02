@@ -19,7 +19,7 @@ public class Comment {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    private Integer pk;
+    private Long pk;
 
     @NotNull
     @ManyToOne

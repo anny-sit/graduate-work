@@ -11,12 +11,15 @@ import jakarta.validation.constraints.NotNull;
 @AllArgsConstructor
 @Getter
 @Setter
+@ToString
+@EqualsAndHashCode
 public class UserDto {
 
-    private String id;
+    private Long id;
+
     @NotBlank(message = "Email must not be blank")
     @Size(min = 4, max = 32)
-    private String email;
+    private String username;
 
     @NotBlank(message = "First name must not be blank")
     @Size(min = 2, max = 16)

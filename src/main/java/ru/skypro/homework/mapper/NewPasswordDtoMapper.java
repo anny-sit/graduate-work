@@ -10,7 +10,7 @@ public interface NewPasswordDtoMapper {
 
     @Mapping(source = "newPassword", target = "password")
     @Mapping(target = "id", ignore = true)
-    @Mapping(target = "email", ignore = true)
+    @Mapping(target = "username", ignore = true)
     @Mapping(target = "firstName", ignore = true)
     @Mapping(target = "lastName", ignore = true)
     @Mapping(target = "phone", ignore = true)

@@ -2,6 +2,8 @@ package ru.skypro.homework.service.impl;
 
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import ru.skypro.homework.dto.AdDto;
@@ -18,15 +20,18 @@ import ru.skypro.homework.repository.UserRepository;
 import ru.skypro.homework.service.AdService;
 import ru.skypro.homework.service.ImageService;
 
+import java.io.IOException;
 import java.util.List;
 
 @Service
 @RequiredArgsConstructor
 public class AdServiceImpl implements AdService {
 
+    private final static Logger logger = LoggerFactory.getLogger(AdServiceImpl.class);
+
+
     private final AdRepository adRepository ;
     private final UserRepository userRepository ;
-    private final ImageRepository imageRepository;
     private final AdMapper adMapper;
     private final ImageService imageService;
 
@@ -38,11 +43,17 @@ public class AdServiceImpl implements AdService {
 
     @Override
     public AdDto createAd(CreateOrUpdateAdDto adDto, MultipartFile image, String userEmail) {
-        User user = userRepository.findByEmail(userEmail)
+
+        User user = userRepository.findByUsername(userEmail)
                 .orElseThrow(() -> new EntityNotFoundException("User not found"));
         Ad ad = adMapper.createOrUpdateAdDtoToEntity(adDto);
         ad.setAuthor(user);
-        Image img = imageService.saveImage(image);
+        Image img = null;
+        try {
+            img = imageService.saveImage(image);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
         ad.setImage(img.getSource());
         ad = adRepository.save(ad);
         return adMapper.toDto(ad);
@@ -73,7 +84,7 @@ public class AdServiceImpl implements AdService {
 
     @Override
     public AdsDto getUserAds(String userEmail) {
-        User user = userRepository.findByEmail(userEmail)
+        User user = userRepository.findByUsername(userEmail)
                 .orElseThrow(() -> new EntityNotFoundException("User not found"));
         List<Ad> ads = adRepository.findByAuthorId(user.getId());
         return new AdsDto(ads.size(), adMapper.toDtoList(ads));
@@ -83,7 +94,12 @@ public class AdServiceImpl implements AdService {
     public String updateAdImage(Long id, MultipartFile image) {
         Ad ad = adRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Ad not found"));
-        Image img = imageService.saveImage(image);
+        Image img = null;
+        try {
+            img = imageService.saveImage(image);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
         ad.setImage(img.getSource());
         adRepository.save(ad);
         return img.getSource();
