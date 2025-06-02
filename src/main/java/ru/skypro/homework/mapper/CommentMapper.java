@@ -3,12 +3,6 @@ package ru.skypro.homework.mapper;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.MappingTarget;
-import ru.skypro.homework.dto.CommentDto;
-import ru.skypro.homework.dto.CreateOrUpdateCommentDto;
-
-import org.mapstruct.Mapper;
-import org.mapstruct.Mapping;
-import org.mapstruct.MappingTarget;
 import org.mapstruct.Named;
 import ru.skypro.homework.dto.CommentDto;
 import ru.skypro.homework.dto.CreateOrUpdateCommentDto;
@@ -32,11 +26,13 @@ public interface CommentMapper {
     @Mapping(target = "pk", ignore = true)
     @Mapping(target = "author", ignore = true)
     @Mapping(target = "createdAt", ignore = true)
+    @Mapping(target = "ad", ignore = true)
     Comment createOrUpdateCommentDtoToEntity(CreateOrUpdateCommentDto dto);
 
     @Mapping(target = "pk", ignore = true)
     @Mapping(target = "author", ignore = true)
     @Mapping(target = "createdAt", ignore = true)
+    @Mapping(target = "ad", ignore = true)
     void updateCommentFromDto(CreateOrUpdateCommentDto dto, @MappingTarget Comment comment);
 
     @Named("localDateTimeToLong")

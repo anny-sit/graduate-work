@@ -12,18 +12,18 @@ import jakarta.persistence.*;
 @NoArgsConstructor
 @EqualsAndHashCode
 @ToString
-@Table(name = "user_table")
+@Table(name = "users")
 @Entity
 public class User {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    private Integer id;
+    private Long id;
 
     @NotNull
     @Size(max = 32, min = 4)
     @Column(length = 32)
-    private String email;
+    private String username;
 
     @NotNull
     @Size(max = 16, min = 2)
@@ -44,12 +44,10 @@ public class User {
     @Column(name = "role", nullable = false)
     private Role role;
 
-    @Column(nullable = false, length = 255)
+    @Column(length = 255)
     private String image;
 
     @NotNull
-    @Size(max = 16, min = 8)
-    @Column(length = 16)
     private String password;
 
 }

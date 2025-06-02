@@ -11,7 +11,7 @@ import jakarta.validation.constraints.*;
 public class CommentDto {
 
     @NotNull
-    private Integer author;
+    private Long author;
 
     @Size(max = 255)
     private String authorImage;
@@ -24,7 +24,7 @@ public class CommentDto {
     @Min(value = 0)
     private Long createdAt;
 
-    private Integer pk;
+    private Long pk;
 
     @NotBlank
     @Size(min = 8, max = 64)

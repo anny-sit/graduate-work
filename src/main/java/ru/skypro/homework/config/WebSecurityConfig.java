@@ -9,7 +9,11 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.provisioning.JdbcUserDetailsManager;
 import org.springframework.security.web.SecurityFilterChain;
-import ru.skypro.homework.dto.Role;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.CorsConfigurationSource;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+
+import java.util.List;
 
 @Configuration
 @EnableWebSecurity
@@ -21,26 +25,18 @@ public class WebSecurityConfig {
             "/v3/api-docs",
             "/webjars/**",
             "/login",
-            "/register"
+            "/register",
+            "/images/**"
     };
 
     @Bean
-    public JdbcUserDetailsManager userDetailsService(DataSource dataSource, PasswordEncoder passwordEncoder) {
+    public JdbcUserDetailsManager userDetailsService(DataSource dataSource) {
         JdbcUserDetailsManager manager = new JdbcUserDetailsManager(dataSource);
-        // Кастомные SQL-запросы для user_table
         manager.setUsersByUsernameQuery(
-                "SELECT email, password, true AS enabled FROM user_table WHERE email = ?"
+                "SELECT username, password, true AS enabled FROM users WHERE username = ?"
         );
         manager.setAuthoritiesByUsernameQuery(
-                "SELECT email, role AS authority FROM user_table WHERE email = ?"
-        );
-        // Настройка создания/обновления пользователей (для /register)
-        manager.setCreateUserSql(
-                "INSERT INTO user_table (email, password, role, first_name, last_name, phone, image) " +
-                        "VALUES (?, ?, ?, ?, ?, ?, ?)"
-        );
-        manager.setUpdateUserSql(
-                "UPDATE user_table SET password = ?, role = ? WHERE email = ?"
+                "SELECT username, role AS authority FROM users WHERE username = ?"
         );
         return manager;
     }
@@ -51,26 +47,27 @@ public class WebSecurityConfig {
                 .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(AUTH_WHITELIST).permitAll()
-                        .requestMatchers("/users/me").authenticated() // Доступ для текущего пользователя
-                        .requestMatchers("/ads/**", "/users/**").hasAnyRole(Role.USER.name(), Role.ADMIN.name())
-                        .requestMatchers("/admin/**").hasRole(Role.ADMIN.name()) // Админ-эндпоинты
+                        .requestMatchers("/users/me", "/users/set_password").authenticated()
+                        .requestMatchers("/ads/**", "/ads/me").hasAnyAuthority("USER", "ADMIN")
+                        .requestMatchers("/admin/**").hasRole("ADMIN")
                         .anyRequest().authenticated()
                 )
-                .cors(cors -> cors.configurationSource(request ->
-                        new org.springframework.web.cors.CorsConfiguration().applyPermitDefaultValues()))
+                .cors(cors -> cors.configurationSource(corsConfigurationSource()))
                 .httpBasic(httpBasic -> httpBasic.realmName("Ads API"));
 
-        // Примечание: Для редактирования/удаления объявлений (/ads/{id}) и комментариев (/comments/{id})
-        // добавьте проверки в контроллерах или сервисах:
-        // - Проверяйте, что текущий пользователь (Principal.getName()) является автором (author_id).
-        // - Для админов (ROLE_ADMIN) разрешайте доступ без проверки авторства.
-        // Пример: В AdsController или AdsService для PUT/DELETE /ads/{id}
-        // if (!user.getEmail().equals(ad.getAuthor().getEmail()) && !user.hasRole("ROLE_ADMIN")) {
-        //     throw new AccessDeniedException("Only the author or admin can modify this ad");
-        // }
-        // Аналогично для CommentController/CommentService.
-
         return http.build();
+    }
+
+    @Bean
+    public CorsConfigurationSource corsConfigurationSource() {
+        CorsConfiguration configuration = new CorsConfiguration();
+        configuration.setAllowedOrigins(List.of("http://localhost:3000"));
+        configuration.setAllowedMethods(List.of("GET", "POST", "PATCH", "DELETE", "PUT", "OPTIONS"));
+        configuration.setAllowedHeaders(List.of("*"));
+        configuration.setAllowCredentials(true);
+        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+        source.registerCorsConfiguration("/**", configuration);
+        return source;
     }
 
     @Bean

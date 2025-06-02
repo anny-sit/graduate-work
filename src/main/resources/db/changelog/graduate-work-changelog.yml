@@ -3,3 +3,13 @@ databaseChangeLog:
       file: db/changelog/versions/001-db.changelog-v0.0.2.sql
   - include:
       file: db/changelog/versions/001-db.changelog-v0.0.3.sql
+  - include:
+      file: db/changelog/versions/001-db.changelog-v0.0.4.sql
+  - include:
+      file: db/changelog/versions/001-db.changelog-v0.0.6.sql
+  - include:
+      file: db/changelog/versions/001-db.changelog-v0.0.7.sql
+  - include:
+      file: db/changelog/versions/001-db.changelog-v0.0.8.sql
+  - include:
+      file: db/changelog/versions/001-db.changelog-v0.0.9.sql

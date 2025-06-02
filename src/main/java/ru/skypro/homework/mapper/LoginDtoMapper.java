@@ -8,10 +8,8 @@ import ru.skypro.homework.model.User;
 @Mapper(componentModel = "spring")
 public interface LoginDtoMapper {
 
-    @Mapping(source = "email", target = "username")
     LoginDto toDto(User user);
 
-    @Mapping(source = "username", target = "email")
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "firstName", ignore = true)
     @Mapping(target = "lastName", ignore = true)

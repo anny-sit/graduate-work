@@ -17,9 +17,10 @@ import jakarta.validation.constraints.NotNull;
 @Table(name = "ad_table")
 @Entity
 public class Ad {
+
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    private Integer pk;
+    private Long pk;
 
     @NotNull
     @ManyToOne

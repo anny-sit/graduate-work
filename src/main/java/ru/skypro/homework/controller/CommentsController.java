@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.*;
 import ru.skypro.homework.dto.CommentDto;
 import ru.skypro.homework.dto.CommentsDto;
 import ru.skypro.homework.dto.CreateOrUpdateCommentDto;
-import ru.skypro.homework.service.CommentService;
+import ru.skypro.homework.service.impl.CommentServiceImpl;
 
 @Slf4j
 @CrossOrigin(value = "http://localhost:3000")
@@ -19,10 +19,10 @@ import ru.skypro.homework.service.CommentService;
 @RequestMapping("/ads")
 public class CommentsController {
 
-    private final CommentService commentService;
+    private final CommentServiceImpl commentService;
 
     @GetMapping("/{id}/comments")
-    public ResponseEntity<CommentsDto> getComments(@PathVariable Integer id) {
+    public ResponseEntity<CommentsDto> getComments(@PathVariable Long id) {
         return ResponseEntity.ok(commentService.getCommentsByAdId(id));
     }
 

@@ -8,15 +8,17 @@ import lombok.*;
 @AllArgsConstructor
 @Getter
 @Setter
+@EqualsAndHashCode
+@ToString
 public class AdDto {
 
     @NotNull
-    private Integer author;
+    private Long author;
 
     @Size(max = 255)
     private String image;
 
-    private Integer pk;
+    private Long pk;
 
     @NotNull
     @Min(value = 0)

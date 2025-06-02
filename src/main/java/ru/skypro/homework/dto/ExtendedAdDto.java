@@ -9,7 +9,7 @@ import lombok.*;
 @Setter
 public class ExtendedAdDto {
 
-    private Integer pk;
+    private Long pk;
 
     @NotBlank
     @Size(min = 2, max = 16)
